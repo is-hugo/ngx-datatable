@@ -42,6 +42,10 @@ import { MouseEvent } from '../../events';
         (click)="onSort()"
         [class]="sortClass">
       </span>
+      <span
+        (click)="onFilter()"
+        [class]="filterClass"> dd
+      </span>
     </div>
   `,
   host: {
@@ -90,6 +94,7 @@ export class DataTableHeaderCellComponent {
     this.sortDir = this.calcSortDir(val);
     this.cellContext.sortDir = this.sortDir;
     this.sortClass = this.calcSortClass(this.sortDir);
+    this.filterClass = this.calcFilterClass();
     this.cd.markForCheck();
   }
 
@@ -99,6 +104,7 @@ export class DataTableHeaderCellComponent {
 
   @Output() sort: EventEmitter<any> = new EventEmitter();
   @Output() select: EventEmitter<any> = new EventEmitter();
+  @Output() filter: EventEmitter<any> = new EventEmitter();
   @Output() columnContextmenu = new EventEmitter<{ event: MouseEvent, column: any }>(false);
 
   @HostBinding('class')
@@ -106,6 +112,7 @@ export class DataTableHeaderCellComponent {
     let cls = 'datatable-header-cell';
 
     if (this.column.sortable) cls += ' sortable';
+    if (this.column.filtrable) cls += ' filtrable';
     if (this.column.resizeable) cls += ' resizeable';
     if (this.column.headerClass) {
       if (typeof this.column.headerClass === 'string') {
@@ -165,11 +172,15 @@ export class DataTableHeaderCellComponent {
   sortClass: string;
   sortDir: SortDirection;
   selectFn = this.select.emit.bind(this.select);
+  filterFn = this.onFilter.bind(this);
+  filterClass: string;
+  filters: any[];
 
   cellContext: any = {
     column: this.column,
     sortDir: this.sortDir,
     sortFn: this.sortFn,
+    filterFn: this.filterFn,
     allRowsSelected: this.allRowsSelected,
     selectFn: this.selectFn
   };
@@ -213,6 +224,18 @@ export class DataTableHeaderCellComponent {
     } else {
       return `sort-btn`;
     }
+  }
+
+  onFilter(): void {
+    // if (!this.column.filtrable) return;
+    console.log('filter', this.column);
+    this.filter.emit({
+      column: this.column
+    });
+  }
+
+  calcFilterClass(): string {
+      return `filter-btn`;
   }
 
 }
