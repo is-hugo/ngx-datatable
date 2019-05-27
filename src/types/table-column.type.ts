@@ -130,6 +130,14 @@ export interface TableColumn {
   sortable?: boolean;
 
   /**
+   * Can the column be filtered
+   *
+   * @type {boolean}
+   * @memberOf TableColumn
+   */
+  filtrable?: boolean;
+
+  /**
    * Can the column be re-arranged by dragging
    *
    * @type {boolean}
