@@ -16,6 +16,7 @@ export declare class DataTableHeaderCellComponent {
     sorts: any[];
     sort: EventEmitter<any>;
     select: EventEmitter<any>;
+    filter: EventEmitter<any>;
     columnContextmenu: EventEmitter<{
         event: MouseEvent;
         column: any;
@@ -30,6 +31,9 @@ export declare class DataTableHeaderCellComponent {
     sortClass: string;
     sortDir: SortDirection;
     selectFn: any;
+    filterFn: any;
+    filterClass: string;
+    filters: any[];
     cellContext: any;
     private _column;
     private _sorts;
@@ -38,4 +42,6 @@ export declare class DataTableHeaderCellComponent {
     calcSortDir(sorts: any[]): any;
     onSort(): void;
     calcSortClass(sortDir: SortDirection): string;
+    onFilter(): void;
+    calcFilterClass(): string;
 }

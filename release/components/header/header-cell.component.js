@@ -18,13 +18,16 @@ var DataTableHeaderCellComponent = /** @class */ (function () {
         this.cd = cd;
         this.sort = new core_1.EventEmitter();
         this.select = new core_1.EventEmitter();
+        this.filter = new core_1.EventEmitter();
         this.columnContextmenu = new core_1.EventEmitter(false);
         this.sortFn = this.onSort.bind(this);
         this.selectFn = this.select.emit.bind(this.select);
+        this.filterFn = this.onFilter.bind(this);
         this.cellContext = {
             column: this.column,
             sortDir: this.sortDir,
             sortFn: this.sortFn,
+            filterFn: this.filterFn,
             allRowsSelected: this.allRowsSelected,
             selectFn: this.selectFn
         };
@@ -61,6 +64,7 @@ var DataTableHeaderCellComponent = /** @class */ (function () {
             this.sortDir = this.calcSortDir(val);
             this.cellContext.sortDir = this.sortDir;
             this.sortClass = this.calcSortClass(this.sortDir);
+            this.filterClass = this.calcFilterClass();
             this.cd.markForCheck();
         },
         enumerable: true,
@@ -71,6 +75,8 @@ var DataTableHeaderCellComponent = /** @class */ (function () {
             var cls = 'datatable-header-cell';
             if (this.column.sortable)
                 cls += ' sortable';
+            if (this.column.filtrable)
+                cls += ' filtrable';
             if (this.column.resizeable)
                 cls += ' resizeable';
             if (this.column.headerClass) {
@@ -175,6 +181,16 @@ var DataTableHeaderCellComponent = /** @class */ (function () {
             return "sort-btn";
         }
     };
+    DataTableHeaderCellComponent.prototype.onFilter = function () {
+        // if (!this.column.filtrable) return;
+        console.log('filter', this.column);
+        this.filter.emit({
+            column: this.column
+        });
+    };
+    DataTableHeaderCellComponent.prototype.calcFilterClass = function () {
+        return "filter-btn";
+    };
     __decorate([
         core_1.Input(),
         __metadata("design:type", String)
@@ -233,6 +249,10 @@ var DataTableHeaderCellComponent = /** @class */ (function () {
     ], DataTableHeaderCellComponent.prototype, "select", void 0);
     __decorate([
         core_1.Output(),
+        __metadata("design:type", core_1.EventEmitter)
+    ], DataTableHeaderCellComponent.prototype, "filter", void 0);
+    __decorate([
+        core_1.Output(),
         __metadata("design:type", Object)
     ], DataTableHeaderCellComponent.prototype, "columnContextmenu", void 0);
     __decorate([
@@ -269,7 +289,7 @@ var DataTableHeaderCellComponent = /** @class */ (function () {
     DataTableHeaderCellComponent = __decorate([
         core_1.Component({
             selector: 'datatable-header-cell',
-            template: "\n    <div class=\"datatable-header-cell-template-wrap\">\n      <ng-template\n        *ngIf=\"isTarget\"\n        [ngTemplateOutlet]=\"targetMarkerTemplate\"\n        [ngTemplateOutletContext]=\"targetMarkerContext\">\n      </ng-template>\n      <label\n        *ngIf=\"isCheckboxable\"\n        class=\"datatable-checkbox\">\n        <input\n          type=\"checkbox\"\n          [checked]=\"allRowsSelected\"\n          (change)=\"select.emit(!allRowsSelected)\"\n        />\n      </label>\n      <span\n        *ngIf=\"!column.headerTemplate\"\n        class=\"datatable-header-cell-wrapper\">\n        <span\n          class=\"datatable-header-cell-label draggable\"\n          (click)=\"onSort()\"\n          [innerHTML]=\"name\">\n        </span>\n      </span>\n      <ng-template\n        *ngIf=\"column.headerTemplate\"\n        [ngTemplateOutlet]=\"column.headerTemplate\"\n        [ngTemplateOutletContext]=\"cellContext\">\n      </ng-template>\n      <span\n        (click)=\"onSort()\"\n        [class]=\"sortClass\">\n      </span>\n    </div>\n  ",
+            template: "\n    <div class=\"datatable-header-cell-template-wrap\">\n      <ng-template\n        *ngIf=\"isTarget\"\n        [ngTemplateOutlet]=\"targetMarkerTemplate\"\n        [ngTemplateOutletContext]=\"targetMarkerContext\">\n      </ng-template>\n      <label\n        *ngIf=\"isCheckboxable\"\n        class=\"datatable-checkbox\">\n        <input\n          type=\"checkbox\"\n          [checked]=\"allRowsSelected\"\n          (change)=\"select.emit(!allRowsSelected)\"\n        />\n      </label>\n      <span\n        *ngIf=\"!column.headerTemplate\"\n        class=\"datatable-header-cell-wrapper\">\n        <span\n          class=\"datatable-header-cell-label draggable\"\n          (click)=\"onSort()\"\n          [innerHTML]=\"name\">\n        </span>\n      </span>\n      <ng-template\n        *ngIf=\"column.headerTemplate\"\n        [ngTemplateOutlet]=\"column.headerTemplate\"\n        [ngTemplateOutletContext]=\"cellContext\">\n      </ng-template>\n      <span\n        (click)=\"onSort()\"\n        [class]=\"sortClass\">\n      </span>\n      <span\n        (click)=\"onFilter()\"\n        [class]=\"filterClass\"> dd\n      </span>\n    </div>\n  ",
             host: {
                 class: 'datatable-header-cell'
             },
